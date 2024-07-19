@@ -28,6 +28,6 @@ export class MetricsExplorer {
   }
 
   decodeMetricsExplorerUrl(url: string): MetricsExplorerPayload {
-    return decompressFromEncodedURIComponent(new URL(url).hash.substring(1)) as MetricsExplorerPayload
+    return JSON.parse(decompressFromEncodedURIComponent(new URL(url).hash.substring(1))) as MetricsExplorerPayload
   }
 }
