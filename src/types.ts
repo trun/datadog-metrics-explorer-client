@@ -11,12 +11,13 @@ export interface MetricsExplorerFormula {
 }
 
 export interface MetricsExplorerRequest {
-  response_format: 'timeseries',
-  queries: MetricsExplorerQuery[],
-  formulas: MetricsExplorerFormula[],
+  response_format: 'timeseries'
+  queries: MetricsExplorerQuery[]
+  formulas: MetricsExplorerFormula[]
   style: {
-    palette: 'dog_classic' | 'semantic',
-    line_type?: 'solid' | 'dashed' | 'dotted',
+    palette: 'dog_classic' | 'semantic'
+    order_reverse?: boolean
+    line_type?: 'solid' | 'dashed' | 'dotted'
     line_width?: 'normal' | 'thin' | 'thick'
   },
   display_type: 'line' | 'bars' | 'area'
@@ -59,11 +60,4 @@ export interface MetricsExplorerParams {
 
 export interface MetricsExplorerConfiguration {
   baseUrl?: string
-}
-
-export declare class MetricsExplorer {
-  private configuration
-  constructor(configuration: MetricsExplorerConfiguration)
-  encodeMetricsExplorerUrl(params: MetricsExplorerParams, payload: MetricsExplorerPayload): string
-  decodeMetricsExplorerUrl(url: string): MetricsExplorerPayload
 }
