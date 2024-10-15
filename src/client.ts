@@ -2,6 +2,7 @@ import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from
 import {
   MetricsExplorerConfiguration,
   MetricsExplorerParams,
+  MetricsExplorerParamsAndPayload,
   MetricsExplorerPayload,
 } from './types'
 
@@ -15,7 +16,7 @@ export class MetricsExplorer {
     return this.configuration?.baseUrl || 'https://app.datadoghq.com'
   }
 
-  encodeMetricsExplorerUrl(params: MetricsExplorerParams, payload: MetricsExplorerPayload) {
+  encodeMetricsExplorerUrl(params: MetricsExplorerParams, payload: MetricsExplorerPayload): string {
     const queryParams = {
       end: `${(params.end || new Date()).getTime()}`,
       start: `${(params.start || new Date((new Date().getTime()) - 86400000)).getTime()}`,
@@ -27,7 +28,29 @@ export class MetricsExplorer {
     return `${this.getBaseUrl()}/metric/explorer?${new URLSearchParams(queryParams).toString()}#${explorerDefinitionHash}`
   }
 
-  decodeMetricsExplorerUrl(url: string): MetricsExplorerPayload {
-    return JSON.parse(decompressFromEncodedURIComponent(new URL(url).hash.substring(1))) as MetricsExplorerPayload
+  encodeMetricsExplorerHash(payload: MetricsExplorerPayload): string {
+    return compressToEncodedURIComponent(JSON.stringify(payload))
+  }
+
+  decodeMetricsExplorerUrl(url: string): MetricsExplorerParamsAndPayload {
+    const urlObj = new URL(url)
+    const payload = JSON.parse(decompressFromEncodedURIComponent(urlObj.hash.substring(1))) as MetricsExplorerPayload
+    const startParam = urlObj.searchParams.get('start')
+    const endParam = urlObj.searchParams.get('end')
+    const params: MetricsExplorerParams = {
+      end: endParam ? new Date(parseInt(endParam)) : undefined,
+      start: startParam ? new Date(parseInt(startParam)) : undefined,
+      paused: Boolean(urlObj.searchParams.get('paused')),
+      graph_layout: urlObj.searchParams.get('graph_layout'),
+    } as MetricsExplorerParams
+
+    return {
+      params,
+      payload,
+    }
+  }
+
+  decodeMetricsExplorerHash(hash: string): MetricsExplorerPayload {
+    return JSON.parse(decompressFromEncodedURIComponent(hash)) as MetricsExplorerPayload
   }
 }

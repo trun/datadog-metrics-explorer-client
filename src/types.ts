@@ -1,4 +1,3 @@
-
 export interface MetricsExplorerQuery {
   query: string
   name: string
@@ -35,19 +34,25 @@ export interface MetricsExplorerSplitConfig {
   }
 }
 
+export interface MetricsExplorerWidgetLayout {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+export interface MetricsExplorerWidgetDefinition {
+  type: 'timeseries'
+  requests: MetricsExplorerRequest[]
+}
+
+export interface MetricsExplorerWidget {
+  layout: MetricsExplorerWidgetLayout
+  definition: MetricsExplorerWidgetDefinition
+}
+
 export interface MetricsExplorerPayload {
-  widget: {
-    layout: {
-      x: number
-      y: number
-      width: number
-      height: number
-    }
-    definition: {
-      type: 'timeseries'
-      requests: MetricsExplorerRequest[]
-    }
-  }
+  widget: MetricsExplorerWidget
   splitConfig?: MetricsExplorerSplitConfig
 }
 
@@ -55,7 +60,12 @@ export interface MetricsExplorerParams {
   end?: Date
   start?: Date
   paused?: boolean
-  graph_layout: 'multi' | 'stacked'
+  graph_layout: 'multi' | 'stacked' | 'split'
+}
+
+export interface MetricsExplorerParamsAndPayload {
+  params: MetricsExplorerParams
+  payload: MetricsExplorerPayload
 }
 
 export interface MetricsExplorerConfiguration {
